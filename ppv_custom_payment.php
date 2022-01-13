@@ -49,7 +49,8 @@
 			curl_setopt($curl, CURLOPT_POSTFIELDS, $data);
 
 			$resp = curl_exec($curl);
-			echo 'Curl error: ' . curl_error($curl);
+
+			echo $resp;
 			
 			curl_close($curl);
 			
