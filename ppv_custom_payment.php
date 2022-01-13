@@ -22,22 +22,64 @@
 	else {
 		$pay_action = postVal('pay_action');
 		if($pay_action) {
-			$service_response = confirmPPVOrder($order_key, $email, $first_name, $last_name, $transaction_id);
+
+			$url = "https://portal.pioneerassurance.co.ke:8080/afintegration/confirmcode";
+
+			$curl = curl_init($url);
+			curl_setopt($curl, CURLOPT_URL, $url);
+			curl_setopt($curl, CURLOPT_POST, true);
+			curl_setopt($curl, CURLOPT_RETURNTRANSFER, true);
+
+			$headers = array(
+			"Accept: application/json",
+			"Content-Type: application/json",
+			);
+			curl_setopt($curl, CURLOPT_HTTPHEADER, $headers);
+			curl_setopt($curl, CURLOPT_SSL_VERIFYPEER, FALSE);
+
+			$data = <<<DATA
+			{
+			"transcode": $transaction_id,
+			"amount": $amount
+			}
+			DATA;
+
+			echo $data;
+
+			curl_setopt($curl, CURLOPT_POSTFIELDS, $data);
+
+			$resp = curl_exec($curl);
+			echo 'Curl error: ' . curl_error($curl);
 			
-			$error_code = arrayVal($service_response, 'error_code'); // check for error.
-			// If error occurs - display the error.
-			if($error_code) {
-				$err_msg = 'Error code '.$error_code.': '.getErrorMessage($error_code).', Response:'.arrayVal($service_response, 'response');
+			curl_close($curl);
+			
+
+			$resp2=json_decode($resp,true);
+
+			if($resp2["status"]==true){
+				$service_response = confirmPPVOrder($order_key, $email, $first_name, $last_name, $transaction_id);
+			
+				$error_code = arrayVal($service_response, 'error_code'); // check for error.
+				// If error occurs - display the error.
+				if($error_code) {
+					$err_msg = 'Error code '.$error_code.': '.getErrorMessage($error_code).', Response:'.arrayVal($service_response, 'response');
+				}
+				else {
+					// If no errors, data will contains the reference number of new uploaded video.
+					$data = arrayVal($service_response, 'data');
+					$result = arrayVal($data, 'result');
+					if($result === 'OK') {
+						header("Location: {$return}");
+						exit();
+					}
+				}
+				
 			}
 			else {
-				// If no errors, data will contains the reference number of new uploaded video.
-				$data = arrayVal($service_response, 'data');
-				$result = arrayVal($data, 'result');
-				if($result === 'OK') {
-					header("Location: {$return}");
-					exit();
-				}
+				exit("Invalid mpesa code");
 			}
+
+			
 		}
 		
 		$cancel_action = postVal('cancel_action');
