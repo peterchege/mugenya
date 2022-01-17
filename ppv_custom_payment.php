@@ -6,9 +6,9 @@
 	$msg = $err_msg = '';
 	
 	$order_key = postVal('order_key');
-	$email = postVal('email');
-	$first_name = postVal('first_name');
-	$last_name = postVal('last_name');
+	$email = 'admin@afc.co.ke';
+	//$first_name = postVal('first_name');
+	//$last_name = postVal('last_name');
 	$transaction_id = postVal('transaction_id');
 	$item_name = postVal('item_name');
 	$amount = postVal('amount');
@@ -44,20 +44,16 @@
 			}
 			DATA;
 
-			echo $data;
-
 			curl_setopt($curl, CURLOPT_POSTFIELDS, $data);
 
 			$resp = curl_exec($curl);
-
-			echo $resp;
 			
 			curl_close($curl);
 			
 
 			$resp2=json_decode($resp,true);
 
-			if($resp2["status"]==true){
+			if($resp2["status"] == true){
 				$service_response = confirmPPVOrder($order_key, $email, $first_name, $last_name, $transaction_id);
 			
 				$error_code = arrayVal($service_response, 'error_code'); // check for error.
@@ -94,7 +90,7 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//'EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
 	<head>
-		<title>SVP PPV API - Custom Payment Test Application</title>
+		<title>MPESA VALIDATOR</title>
 	</head>
 	<body style="background-color:#FFFFFF;color:#000000;">
 		<form method="post" name="form">
@@ -137,31 +133,7 @@
 			</div>
 			<div style="width:760px;background-color:#fff;float:left;" align="center">
 				<div align="right" style="width:375px; float:left; padding-right: 5px;">
-					Email :
-				</div>
-				<div style="width:375px;float:left;padding-left: 5px;" align="left">
-					<input type="text" name="email" value="<?=$email?>">
-				</div>
-			</div>
-			<div style="width:760px;background-color:#fff;float:left;" align="center">
-				<div align="right" style="width:375px; float:left; padding-right: 5px;">
-					First Name :
-				</div>
-				<div style="width:375px;float:left;padding-left: 5px;" align="left">
-					<input type="text" name="first_name" value="<?=$first_name?>">
-				</div>
-			</div>
-			<div style="width:760px;background-color:#fff;float:left;" align="center">
-				<div align="right" style="width:375px; float:left; padding-right: 5px;">
-					Last Name :
-				</div>
-				<div style="width:375px;float:left;padding-left: 5px;" align="left">
-					<input type="text" name="last_name" value="<?=$last_name?>">
-				</div>
-			</div>
-			<div style="width:760px;background-color:#fff;float:left;" align="center">
-				<div align="right" style="width:375px; float:left; padding-right: 5px;">
-					Transaction ID :
+					MPESA CODE :
 				</div>
 				<div style="width:375px;float:left;padding-left: 5px;" align="left">
 					<input type="text" name="transaction_id" value="<?=$transaction_id?>">
