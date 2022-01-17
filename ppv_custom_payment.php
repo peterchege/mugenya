@@ -15,8 +15,11 @@
 	$currency = postVal('currency');
 	$return = postVal('return');
 	$cancel = postVal('cancel');
-	
-	if(!$order_key || !$amount || !$currency || !$return || !$cancel) {
+
+	if(!$transaction_id){
+		exit("Please Enter the  Mpesa code");
+	}
+	else if(!$order_key || !$amount || !$currency || !$return || !$cancel || $transaction_id) {
 		exit("Invalid input parameters");
 	}
 	else {
