@@ -15,47 +15,50 @@
 	$currency = postVal('currency');
 	$return = postVal('return');
 	$cancel = postVal('cancel');
-
-	if(!$transaction_id){
-		exit("Please Enter the  Mpesa code");
-	}
-	else if(!$order_key || !$amount || !$currency || !$return || !$cancel || $transaction_id) {
+​
+	
+       if(!$order_key || !$amount || !$currency || !$return || !$cancel) {
 		exit("Invalid input parameters");
 	}
 	else {
 		$pay_action = postVal('pay_action');
 		if($pay_action) {
-
+		     
+		       if(!$transaction_id){
+				exit("Please Enter the  Mpesa code");
+			}
+			else {
+​
 			$url = "https://portal.pioneerassurance.co.ke:8080/afintegration/confirmcode";
-
+​
 			$curl = curl_init($url);
 			curl_setopt($curl, CURLOPT_URL, $url);
 			curl_setopt($curl, CURLOPT_POST, true);
 			curl_setopt($curl, CURLOPT_RETURNTRANSFER, true);
-
+​
 			$headers = array(
 			"Accept: application/json",
 			"Content-Type: application/json",
 			);
 			curl_setopt($curl, CURLOPT_HTTPHEADER, $headers);
 			curl_setopt($curl, CURLOPT_SSL_VERIFYPEER, FALSE);
-
+​
 			$data = <<<DATA
 			{
 			"transcode": $transaction_id,
 			"amount": $amount
 			}
 			DATA;
-
+​
 			curl_setopt($curl, CURLOPT_POSTFIELDS, $data);
-
+​
 			$resp = curl_exec($curl);
 			
 			curl_close($curl);
 			
-
+​
 			$resp2=json_decode($resp,true);
-
+​
 			if($resp2["status"] == true){
 				$service_response = confirmPPVOrder($order_key, $email, $first_name, $last_name, $transaction_id);
 			
@@ -78,7 +81,8 @@
 			else {
 				exit("Invalid mpesa code");
 			}
-
+		     }
+​
 			
 		}
 		
